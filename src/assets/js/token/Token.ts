@@ -1,4 +1,12 @@
-import {getOTPTypeFromName, Label, OTPType, TokenIcon, TokenSecret} from "./TokenInfo";
+import {
+    getOTPAlgorithmFromName,
+    getOTPTypeFromName,
+    Label,
+    OTPAlgorithm,
+    OTPType,
+    TokenIcon,
+    TokenSecret
+} from "./TokenInfo";
 
 export class Token {
     constructor(uuid: string, favorite: boolean, otpType: OTPType, label: Label,
@@ -10,6 +18,20 @@ export class Token {
         this.issuer = issuer;
         this.icon = icon;
         this.secret = secret;
+    }
+
+    static fromJson(json: any): Token {
+        let uuid: string = json.uuid;
+        let favorite: boolean = json.favorite;
+        let otpType: OTPType = getOTPTypeFromName(json.otpType);
+        let issuer: string = json.issuer;
+        let icon: TokenIcon = new TokenIcon(json.icon.icon, json.icon.mime);
+        let label: Label = new Label(json.label.accountName, json.label.issuer);
+
+        let secretJson: any = json.secret;
+        let algorithm: OTPAlgorithm = getOTPAlgorithmFromName(secretJson.algorithm);
+        let secret: TokenSecret = new TokenSecret(secretJson.secret, algorithm, secretJson.digits, secretJson.period, secretJson.counter);
+        return new Token(uuid, favorite, otpType, label, issuer, icon, secret);
     }
 
     static fromAegis(entryJson: any): Token {

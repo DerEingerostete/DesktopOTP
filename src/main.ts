@@ -16,12 +16,13 @@ import {createRouter, createWebHashHistory, Router} from "vue-router";
 import LoadingComponent from "./views/LoadingView.vue";
 import SetupView from "./views/SetupView.vue";
 import LoginView from "./views/LoginView.vue";
+import MainView from "./views/MainView.vue";
 
 const routes = [
     {path: "/", component: LoadingComponent, props: {action: "startup"}},
     {path: "/setup", component: SetupView},
     {path: "/login", component: LoginView},
-    {path: "/main", component: LoadingComponent, props: {action: "none", message: "Main Window"}}
+    {path: "/main", component: MainView}
 ];
 
 export const router : Router = createRouter({

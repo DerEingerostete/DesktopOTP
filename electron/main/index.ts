@@ -118,7 +118,7 @@ app.on('activate', () => {
   if (allWindows.length) {
     allWindows[0].focus()
   } else {
-    createWindow()
+    createWindow().then((): void => {});
   }
 })
 
@@ -133,8 +133,14 @@ ipcMain.handle('open-win', (_, arg) => {
   })
 
   if (process.env.VITE_DEV_SERVER_URL) {
-    childWindow.loadURL(`${url}#${arg}`)
+    childWindow.loadURL(`${url}#${arg}`).then((): void => {});
   } else {
-    childWindow.loadFile(indexHtml, { hash: arg })
-  }
-})
+    childWindow.loadFile(indexHtml, {hash: arg}).then((): void => {});
+   }
+});
+
+ipcMain.on('exit-app', (): void => {
+  if (win !== null) win.close();
+  app.quit();
+  process.exit(0);
+});

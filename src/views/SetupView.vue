@@ -7,11 +7,9 @@ import {AegisSetup, finishSetup, PasswordSetup} from "../assets/js/SetupClasses"
 import {QStepper} from "quasar";
 import {router} from "../main";
 import EncryptionStep from "../components/setup/EncryptionStep.vue";
-import {CryptoOptions} from "../assets/js/crypto/CryptoClasses";
 
 const step = ref(1);
 const passwordSetup = ref(new PasswordSetup());
-const encryptionSetup = ref(new CryptoOptions());
 const aegisSetup = ref(new AegisSetup(null));
 const stepper = ref(null);
 
@@ -22,7 +20,7 @@ async function handleNext() {
             if (success) (stepper.value as QStepper).next();
         });
     } else if (step.value === 4) {
-        finishSetup(passwordSetup.value, encryptionSetup.value, aegisSetup.value).then((success) => {
+        finishSetup(passwordSetup.value, aegisSetup.value).then((success) => {
             if (success) router.push('/main');
         });
     } else {
@@ -67,7 +65,7 @@ async function handleNext() {
                     :done="step > 2"
                     :disable="passwordSetup.encryptionOptionsDisabled"
             >
-                <EncryptionStep :options="encryptionSetup"></EncryptionStep>
+                <EncryptionStep/>
             </q-step>
 
             <q-step

@@ -2,36 +2,33 @@
 import {ref, watch} from "vue";
 import {QInput} from "quasar";
 import {
-    CryptoOptions,
     ENCRYPTION_ALGORITHMS,
+    fromShortName,
+    getRandomAPI,
     getRandomAPINames,
-    getRandomAPIShortName,
     HASHING_ALGORITHMS
 } from "../../assets/js/crypto/CryptoClasses";
-
-const props = defineProps<{
-    options: CryptoOptions,
-}>();
+import {CRYPTO_OPTIONS} from "../../assets/js/Constants";
 
 const encryptionOptions = ref(ENCRYPTION_ALGORITHMS);
-const encryptionModel = ref(props.options.encryptionAlgorithm.toUpperCase());
+const encryptionModel = ref(CRYPTO_OPTIONS.encryptionAlgorithm.toUpperCase());
 
-const hashingModel = ref(props.options.hashAlgorithm.toUpperCase());
+const hashingModel = ref(CRYPTO_OPTIONS.hashAlgorithm.toUpperCase());
 const hashingOptions = ref(HASHING_ALGORITHMS);
 
 const randomOptions = ref(getRandomAPINames());
-const randomModel = ref(props.options.randomAPIName);
+const randomModel = ref(fromShortName(CRYPTO_OPTIONS.api.getName()));
 
-const apiKey = ref(props.options.apiKey);
+const apiKey = ref(CRYPTO_OPTIONS.apiKey);
 const hideAPIKey = ref(true);
-const requireAPIKey = ref(props.options.randomAPIName === "NodeJS Crypto (Offline)");
+const requireAPIKey = ref(CRYPTO_OPTIONS.api.getName() === "crypto");
 
-watch(randomModel, (newValue) => props.options.randomAPIName = getRandomAPIShortName(newValue));
+watch(randomModel, (newValue) => CRYPTO_OPTIONS.api = getRandomAPI(newValue));
 watch(randomModel, (newValue) => requireAPIKey.value = newValue === "NodeJS Crypto (Offline)");
 
-watch(apiKey, (newValue) => props.options.apiKey = newValue);
-watch(encryptionModel, (newValue) => props.options.encryptionAlgorithm = newValue.toLowerCase());
-watch(hashingModel, (newValue) => props.options.hashAlgorithm = newValue.toLowerCase());
+watch(apiKey, (newValue) => CRYPTO_OPTIONS.apiKey = newValue);
+watch(encryptionModel, (newValue) => CRYPTO_OPTIONS.encryptionAlgorithm = newValue.toLowerCase());
+watch(hashingModel, (newValue) => CRYPTO_OPTIONS.hashAlgorithm = newValue.toLowerCase());
 </script>
 
 <template>
@@ -59,6 +56,8 @@ watch(hashingModel, (newValue) => props.options.hashAlgorithm = newValue.toLower
             />
         </template>
     </q-input>
+
+    <!--TODO: Add IV and Salt Length options -->
 </template>
 
 <style scoped>

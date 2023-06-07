@@ -41,7 +41,7 @@ export enum OTPType {
     TOTP = "totp",
 }
 
-export function getOTPTypeFromName(name: string) {
+export function getOTPTypeFromName(name: string): OTPType {
     if (!name || name.trim().length === 0) return null;
     let lowercase: string = name.toLowerCase();
     for (const type of Object.values(OTPType)) {

@@ -24,17 +24,24 @@ export function getRandomAPIShortName(name: string): string {
     }
 }
 
-export function getRandomAPINames(): string[] {
-    return ["NodeJS Crypto (Offline)", "Random.org (Online)", "ANU Quantum Numbers (Online)"];
+export function fromShortName(name: string): string {
+    switch (name) {
+        case "random.org": return "Random.org (Online)"
+        case "anu_qrng": return "ANU Quantum Numbers (Online)";
+        case "crypto": return "NodeJS Crypto (Offline)";
+        default: throw new Error("Unknown api name: " + name);
+    }
 }
 
-export function getDefaultRandomAPI(): string {
-    return "NodeJS Crypto (Offline)";
+export function getRandomAPINames(): string[] {
+    return ["NodeJS Crypto (Offline)", "Random.org (Online)", "ANU Quantum Numbers (Online)"];
 }
 
 export interface RandomAPI {
 
     randomBytes(size: number, options: CryptoOptions): Promise<Buffer>;
+
+    getName(): string;
 
 }
 
@@ -42,6 +49,10 @@ export class CryptoRandomAPI implements RandomAPI {
 
     async randomBytes(size: number): Promise<Buffer> {
         return crypto.randomBytes(size);
+    }
+
+    getName(): string {
+        return "crypto";
     }
 
 }
@@ -76,6 +87,10 @@ export class RandomOrgAPI implements RandomAPI {
         return Buffer.from(base64, "base64");
     }
 
+    getName(): string {
+        return "random.org";
+    }
+
 }
 
 export class ANURandomAPI implements RandomAPI {
@@ -99,15 +114,18 @@ export class ANURandomAPI implements RandomAPI {
         return Buffer.from(fullHex, "hex");
     }
 
+    getName(): string {
+        return "anu_qrng";
+    }
+
 }
 
 export class CryptoOptions {
     constructor() {
         this.apiKey = null;
         this.api = new CryptoRandomAPI();
-        this.randomAPIName = getDefaultRandomAPI();
 
-        this.ivLength = 16;
+        this.ivLength = 12; //16 for CBC
         this.saltLength = 16;
         this.pbkdf2Length = 32;
         this.iterations = 625;
@@ -115,14 +133,10 @@ export class CryptoOptions {
         this.hashAlgorithm = "SHA256";
     }
 
-    canEncrypt() {
-        return this.key !== null && this.iv !== null && this.salt !== null && this.iterations !== null;
-    }
-
     toJson(): any {
         return {
             options: {
-                randomAPIName: this.randomAPIName,
+                apiName: this.api.getName(),
                 apiKey: this.apiKey,
                 iterations: this.iterations,
                 ivLength: this.ivLength,
@@ -131,57 +145,57 @@ export class CryptoOptions {
                 encryptionAlgorithmName: this.encryptionAlgorithm.toLowerCase(),
                 hashAlgorithm: this.hashAlgorithm.toLowerCase()
             },
-            key: this.key.toString("base64"),
             iv: this.iv.toString("base64"),
-            salt: this.salt
+            salt: this.salt.toString("base64")
         };
     }
 
     static fromJson(json: any): CryptoOptions {
         let cryptoOptions: CryptoOptions = new CryptoOptions();
-        if ("salt" in json) cryptoOptions.salt = json.salt;
+        if ("salt" in json) cryptoOptions.salt = Buffer.from(json.salt, "base64");
+        else console.log("Warning: Salt is not in JSON");
+
         if ("iv" in json) cryptoOptions.iv = Buffer.from(json.iv, "base64");
-        if ("key" in json) cryptoOptions.key = Buffer.from(json.key, "base64");
+        else console.log("Warning: IV is not in JSON");
 
         if ("options" in json) {
             let optionsJson: any = json.options;
-            cryptoOptions.randomAPIName = optionsJson.randomAPIName;
             cryptoOptions.apiKey = optionsJson.apiKey;
-            cryptoOptions.api = getRandomAPI(cryptoOptions.randomAPIName);
+            cryptoOptions.api = getRandomAPI(optionsJson.apiName);
 
             cryptoOptions.iterations = optionsJson.iterations
             cryptoOptions.ivLength = optionsJson.ivLength;
             cryptoOptions.saltLength = optionsJson.saltLength;
             cryptoOptions.pbkdf2Length = optionsJson.pbkdf2Length;
 
-            cryptoOptions.encryptionAlgorithm = json.encryptionAlgorithmName;
-            cryptoOptions.hashAlgorithm = json.hashAlgorithm;
-        }
+            cryptoOptions.encryptionAlgorithm = optionsJson.encryptionAlgorithmName;
+            cryptoOptions.hashAlgorithm = optionsJson.hashAlgorithm;
+        } else console.log("Warning: Options is not in JSON");
         return cryptoOptions;
     }
 
     //For Key Generation
     apiKey: string | null;
     api: RandomAPI;
-    randomAPIName: string;
 
     //Set on setup
     iterations: number;
     saltLength: number;
     ivLength: number;
     pbkdf2Length: number;
+
     encryptionAlgorithm: string;
     hashAlgorithm: string;
 
     //Changing each encryption
-    key: Buffer;
+    key: Buffer; //DO NOT SAVE THIS
     iv: Buffer;
-    salt: string;
+    salt: Buffer;
 }
 
 export const HASHING_ALGORITHMS: string[] = ["SHA256", "SHA512"];
 export const ENCRYPTION_ALGORITHMS: string[] = [
-    'AES-128-CCM', 'AES-128-GCM', 'AES-128-OCB', 'AES-192-CCM',
-    'AES-192-GCM', 'AES-192-OCB', 'AES-256-CCM', 'AES-256-OCB',
+    'AES-128-CBC', 'AES-128-GCM', 'AES-128-OCB', 'AES-192-CBC',
+    'AES-192-GCM', 'AES-192-OCB', 'AES-256-CBC', 'AES-256-OCB',
     'AES-256-GCM'
 ];

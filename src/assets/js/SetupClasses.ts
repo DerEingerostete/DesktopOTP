@@ -3,7 +3,7 @@ import fileSystem from "fs";
 import {Token} from "./token/Token";
 import {encrypt, fillCryptoOptions} from "./crypto/CryptoUtils";
 import {CONFIG_DIRECTORY_PATH, STORAGE_FILE_NAME} from "./ConfigLoader";
-import {CryptoOptions} from "./crypto/CryptoClasses";
+import {CRYPTO_OPTIONS} from "./Constants";
 
 export class PasswordSetup {
     constructor() {
@@ -95,7 +95,8 @@ export class AegisSetup {
             message: `Aegis import completed successfully<br>${importedArray.length} Total, ${skippedEntries} Skipped`,
             progress: false,
             ok: true,
-            html: true
+            html: true,
+            persistent: false
         });
         return true;
     }
@@ -117,8 +118,7 @@ function updateDialog(dialog: DialogChainObject, total: number, imported: number
     });
 }
 
-export async function finishSetup(passwordSetup: PasswordSetup, crypto: CryptoOptions,
-                                  aegisSetup: AegisSetup): Promise<boolean> {
+export async function finishSetup(passwordSetup: PasswordSetup, aegisSetup: AegisSetup): Promise<boolean> {
     const dialog: DialogChainObject = Dialog.create({
         progress: {
             spinner: QSpinnerGrid,
@@ -138,8 +138,8 @@ export async function finishSetup(passwordSetup: PasswordSetup, crypto: CryptoOp
 
     let deleteOnFinish: boolean = aegisSetup.deleteOnFinish && aegisSetup.file != null;
     try {
-        fillCryptoOptions(password, crypto);
-        encrypt(tokens, crypto);
+        fillCryptoOptions(password, CRYPTO_OPTIONS);
+        encrypt(tokens, CRYPTO_OPTIONS);
         const fileSystem = require('fs');
         if (deleteOnFinish) {
             fileSystem.unlinkSync(aegisSetup.file.path);
