@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import TokenComponent from "../components/token/TokenComponent.vue";
 import {TOKENS} from "../assets/js/Constants";
+import TokenComponent from "../components/token/TokenComponent.vue";
 
 const tokenList = ref(TOKENS);
 let progress = ref(1);
