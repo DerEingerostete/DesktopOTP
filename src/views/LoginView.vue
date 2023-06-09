@@ -30,7 +30,6 @@ function unlock() {
             TOKENS.push(token);
         }
 
-        console.log(decrypted); //TODO: Remove
         router.push('/main');
     } catch (error) {
         console.log("Failed to unlock", error);
