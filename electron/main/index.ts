@@ -3,6 +3,7 @@ import {release} from 'node:os'
 import {join} from 'node:path'
 import {loadWindowConfig, updateWindowConfig, WindowData} from "../../src/assets/js/ConfigLoader";
 import Rectangle = Electron.Rectangle;
+import IpcMainInvokeEvent = Electron.IpcMainInvokeEvent;
 
 // The built directory structure
 //
@@ -38,11 +39,11 @@ if (!app.requestSingleInstanceLock()) {
 
 let win: BrowserWindow | null = null
 // Here, you can also use other preload
-const preload = join(__dirname, '../preload/index.js')
-const url = process.env.VITE_DEV_SERVER_URL
-const indexHtml = join(process.env.DIST, 'index.html')
+const preload: string = join(__dirname, '../preload/index.js')
+const url: string = process.env.VITE_DEV_SERVER_URL
+const indexHtml: string = join(process.env.DIST, 'index.html')
 
-async function createWindow() {
+async function createWindow(): Promise<void> {
   let windowData: WindowData | null = loadWindowConfig();
   if (windowData == null) {
     app.quit();
@@ -68,6 +69,7 @@ async function createWindow() {
     show: false
   });
 
+  win.setContentProtection(false); //TODO: Enable to prevent screenshots
   win.maximize();
   win.show();
 
@@ -100,12 +102,12 @@ async function createWindow() {
 
 app.whenReady().then(createWindow)
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', (): void => {
   win = null;
   if (process.platform !== 'darwin') app.quit();
 })
 
-app.on('second-instance', () => {
+app.on('second-instance', (): void => {
   if (win) {
     // Focus on the main window if the user tried to open another
     if (win.isMinimized()) win.restore()
@@ -113,8 +115,8 @@ app.on('second-instance', () => {
   }
 })
 
-app.on('activate', () => {
-  const allWindows = BrowserWindow.getAllWindows()
+app.on('activate', (): void => {
+  const allWindows: BrowserWindow[] = BrowserWindow.getAllWindows()
   if (allWindows.length) {
     allWindows[0].focus()
   } else {
@@ -123,8 +125,8 @@ app.on('activate', () => {
 })
 
 // New window example arg: new windows url
-ipcMain.handle('open-win', (_, arg) => {
-  const childWindow = new BrowserWindow({
+ipcMain.handle('open-win', (_:IpcMainInvokeEvent, arg): void => {
+  const childWindow: BrowserWindow = new BrowserWindow({
     webPreferences: {
       preload,
       nodeIntegration: true,
