@@ -2,7 +2,7 @@
   "name": "desktop-otp",
   "version": "2.0.0",
   "main": "dist-electron/main/index.js",
-  "description": " An Electron based 2FA client ",
+  "description": "A simple Electron based 2FA client",
   "author": "DerEingerostete",
   "license": "MIT",
   "private": true,
