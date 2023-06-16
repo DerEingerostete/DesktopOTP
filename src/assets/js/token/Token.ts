@@ -49,6 +49,20 @@ export class Token {
         return new Token(uuid, favorite, type, label, issuer, icon, secret);
     }
 
+    getDisplayNames(): string[] {
+        let displayNames: string[] = [];
+        if (this.issuer !== null) displayNames[0] = this.issuer;
+
+        let labelString: string = this.label.toString();
+        if (labelString !== null && labelString.length > 0) {
+            labelString = labelString.trim();
+            if (displayNames[0].length === 0) displayNames[0] = labelString;
+            else displayNames[1] = "(" + labelString + ")";
+        }
+
+        return displayNames;
+    }
+
     uuid: string;
     favorite: boolean;
 
