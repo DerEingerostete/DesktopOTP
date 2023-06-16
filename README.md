@@ -1,8 +1,8 @@
-<h1 style="text-align: center">
+<h1 align="center">
     <img src="https://raw.githubusercontent.com/DerEingerostete/DesktopOTP/master/src/assets/img/logo.png" alt="DesktopOTP">
 </h1>
 
-<p style="text-align: center">
+<p align="center">
   <i>A simple Electron based 2FA client 🔐</i>
 </p>
 
