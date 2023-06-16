@@ -2,19 +2,17 @@
 import {ref} from "vue";
 import {TOKENS} from "../assets/js/Constants";
 import TokenComponent from "../components/token/TokenComponent.vue";
+import {TokenUtils} from "../assets/js/token/TokenUtils";
 
 const tokenList = ref(TOKENS);
-let progress = ref(1);
+const progress = ref(1);
+const period: number = TokenUtils.getMostFrequentPeriod(tokenList.value);
+const multipliedPeriod: number = period * 1000;
 
 update();
 function update() {
-    progress.value -= 0.01;
-    if (progress.value <= 0) {
-        progress.value = 1;
-        setTimeout(() => update(), 2500);
-    } else {
-        setTimeout(() => update(), 250);
-    }
+    progress.value = TokenUtils.getMillisTillNextRotation(period) / multipliedPeriod;
+    setTimeout(() => update(), 500);
 }
 </script>
 
