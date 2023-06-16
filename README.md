@@ -14,7 +14,7 @@ DesktopOTP is a simple Electron based 2FA client to generate one-time-passwords.
  - **Token Privacy:** DesktopOTP hides all tokens by default
  - **Import Methods:** DesktopOTP supports the import of your Aegis database
 
-## Todo:
+## Todos:
 - [ ] HTOP support
 - [ ] Individual progress bars for other periods
 - [ ] Edit tokens
