@@ -1,7 +1,5 @@
 <h1 style="text-align: center">
-    <a href="https://amplication.com/#gh-light-mode-only">
     <img src="https://raw.githubusercontent.com/DerEingerostete/DesktopOTP/master/src/assets/img/logo.png" alt="DesktopOTP">
-    </a>
 </h1>
 
 <p style="text-align: center">
