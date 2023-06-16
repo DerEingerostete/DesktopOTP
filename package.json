@@ -2,8 +2,8 @@
   "name": "desktop-otp",
   "version": "2.0.0",
   "main": "dist-electron/main/index.js",
-  "description": "A small 2FA code generator",
-  "author": "DerEingerostete <git@dereingerostete.dev>",
+  "description": " An Electron based 2FA client ",
+  "author": "DerEingerostete",
   "license": "MIT",
   "private": true,
   "keywords": [
