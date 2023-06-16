@@ -28,7 +28,7 @@ export default defineConfig(({ command }) => {
             if (process.env.VSCODE_DEBUG) {
               console.log(/* For `.vscode/.debug.script.mjs` */'[startup] Electron App')
             } else {
-              options.startup()
+              options.startup().then((): void => {});
             }
           },
           vite: {
@@ -65,7 +65,7 @@ export default defineConfig(({ command }) => {
       renderer(),
     ],
     server: process.env.VSCODE_DEBUG && (() => {
-      const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
+      const url: URL = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
       return {
         host: url.hostname,
         port: +url.port,
