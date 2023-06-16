@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
+    "otpauth": "^9.1.2",
     "primevue": "^3.28.0",
     "quasar": "^2.12.0",
     "vue-router": "^4.1.6"
